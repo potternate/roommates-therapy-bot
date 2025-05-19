@@ -9,13 +9,12 @@ An AI-powered therapy assistant designed to help roommates resolve conflicts and
 - Provides therapeutic insights and practical solutions for common roommate conflicts
 - Easy speaker switching to facilitate balanced conversations
 - Modern web interface built with Streamlit
-- Powered by Ollama's llama3 model for natural language understanding
+- Powered by OpenAI's GPT models for advanced natural language understanding
 
 ## Prerequisites
 
 - Python 3.8 or higher
-- Ollama installed and running locally
-- The `llama3` model downloaded in Ollama
+- An OpenAI API key
 
 ## Installation
 
@@ -32,11 +31,12 @@ An AI-powered therapy assistant designed to help roommates resolve conflicts and
    pip install -r requirements.txt
    ```
 
-3. Make sure Ollama is running with the llama3 model:
+3. Set up your OpenAI API key in the `.env` file:
 
    ```bash
-   # In a separate terminal window
-   ollama run llama3
+   # The run script will create a template .env file if it doesn't exist
+   # Edit the .env file and add your OpenAI API key
+   OPENAI_API_KEY=your_openai_api_key_here
    ```
 
 ## Usage
@@ -66,7 +66,7 @@ This application uses several technologies to create an effective roommate thera
 
 2. **Context Building**: The conversation history, along with information about the current speaker, is formatted into a context prompt for the AI.
 
-3. **LLM Processing**: Ollama's llama3 model processes the context with specific instructions to act as a roommate mediator.
+3. **LLM Processing**: OpenAI's GPT model processes the context with specific instructions to act as a roommate mediator.
 
 4. **Response Generation**: The AI generates therapeutic responses tailored to roommate issues, providing insights and practical solutions.
 
@@ -74,7 +74,7 @@ This application uses several technologies to create an effective roommate thera
 
 1. **Streamlit Interface**: Provides a clean, interactive web interface for the conversation.
 
-2. **Ollama Integration**: Connects to a locally running Ollama instance to access the llama3 language model.
+2. **OpenAI Integration**: Connects to OpenAI's API to access advanced GPT models for natural language processing.
 
 3. **Speaker Management**: Tracks which roommate is currently speaking and maintains context throughout the conversation.
 
@@ -84,10 +84,10 @@ This application uses several technologies to create an effective roommate thera
 
 You can customize various aspects of the application:
 
-- **Therapist Personality**: Modify the system prompt in `ollama_client.py` to change the mediator's personality or approach
+- **Therapist Personality**: Modify the system prompt in `openai_client.py` to change the mediator's personality or approach
 - **UI Appearance**: Customize the Streamlit interface in `app.py`
-- **LLM Parameters**: Adjust temperature, top_p, and other parameters in the `get_response` function in `ollama_client.py`
-- **Different Model**: Change the `MODEL_NAME` variable in `ollama_client.py` to use a different Ollama model
+- **LLM Parameters**: Adjust temperature, max_tokens, and other parameters in the `get_response` function in `openai_client.py`
+- **Different Model**: Change the `MODEL_NAME` variable in `openai_client.py` to use a different OpenAI model (e.g., "gpt-4-turbo", "gpt-3.5-turbo")
 
 ## Contributing
 

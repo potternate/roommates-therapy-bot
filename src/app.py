@@ -1,7 +1,11 @@
 import streamlit as st
-import ollama_client
+import openai_client
 import time
 import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 def initialize_session():
     if "messages" not in st.session_state:
@@ -63,7 +67,7 @@ def main():
             st.markdown(user_message)
         
         # Prepare context for the AI model
-        full_context = ollama_client.prepare_therapy_context(st.session_state.messages, st.session_state.current_speaker)
+        formatted_messages = openai_client.prepare_therapy_context(st.session_state.messages, st.session_state.current_speaker)
         
         # Get AI response
         with st.chat_message("assistant", avatar="🧠"):
@@ -72,7 +76,7 @@ def main():
             
             # Simulate stream of response with a spinner
             with st.spinner("Therapist is thinking..."):
-                response = ollama_client.get_response(full_context)
+                response = openai_client.get_response(formatted_messages)
             
             # Display the response word by word
             for chunk in response.split():

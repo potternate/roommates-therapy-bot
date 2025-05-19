@@ -1,26 +1,18 @@
 #!/bin/bash
 
-# Check for system dependencies on macOS
-if [[ "$(uname)" == "Darwin" ]]; then
-    if ! brew list portaudio &>/dev/null; then
-        echo "Installing portaudio with Homebrew..."
-        brew install portaudio
-    fi
+# Check if .env file exists
+if [ ! -f ".env" ]; then
+    echo "⚠️  Warning: .env file not found."
+    echo "Creating a template .env file. Please edit it with your OpenAI API key."
+    echo "OPENAI_API_KEY=your_openai_api_key_here" > .env
+    echo ""
 fi
 
-# Make sure Ollama is running
-if ! pgrep -x "ollama" > /dev/null
-then
-    echo "Starting Ollama..."
-    ollama serve &
-    sleep 5  # Give Ollama time to start
-fi
-
-# Check if the model is available
-if ! ollama list | grep -q "llama3"
-then
-    echo "Downloading llama3 model..."
-    ollama pull llama3
+# Check if OpenAI API key is set
+if grep -q "your_openai_api_key_here" .env; then
+    echo "⚠️  Warning: OpenAI API key not set in .env file."
+    echo "Please edit the .env file and set your OpenAI API key."
+    echo ""
 fi
 
 # Install dependencies if needed
@@ -46,16 +38,7 @@ else
     fi
 fi
 
-# Check for HuggingFace token
-if [ -z "$HF_TOKEN" ]; then
-    echo "⚠️  Warning: HF_TOKEN environment variable not set."
-    echo "    Advanced speaker diarization will not be available."
-    echo "    Get a token at https://huggingface.co and set it with:"
-    echo "    export HF_TOKEN=your_token"
-    echo ""
-fi
-
 # Run the application
-echo "Starting AI Couples Therapy Bot - Voice Edition..."
+echo "Starting AI Roommates Therapy Bot..."
 echo "Open your browser to the URL shown below (typically http://localhost:8501)"
 streamlit run src/app.py
