@@ -1,15 +1,19 @@
 import os
-import openai
+import json
+import requests
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
 load_dotenv()
 
 # Get API key from environment variable
-openai.api_key = os.getenv("OPENAI_API_KEY")
+API_KEY = os.getenv("OPENAI_API_KEY")
 
-# Default to GPT-4o, but can be changed
-MODEL_NAME = "gpt-4o"
+# OpenAI API endpoint
+API_URL = "https://api.openai.com/v1/chat/completions"
+
+# Using a more cost-effective model
+MODEL_NAME = "gpt-3.5-turbo"
 
 def prepare_therapy_context(messages, current_speaker):
     """
@@ -55,18 +59,32 @@ You should address the current speaker directly while keeping in mind the contex
 
 def get_response(messages):
     """
-    Send a request to the OpenAI API and get a response.
+    Send a request to the OpenAI API and get a response using direct HTTP requests.
     """
     try:
-        response = openai.chat.completions.create(
-            model=MODEL_NAME,
-            messages=messages,
-            temperature=0.7,
-            max_tokens=1024,
-            top_p=0.9,
-            frequency_penalty=0.0,
-            presence_penalty=0.0
-        )
-        return response.choices[0].message.content
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {API_KEY}"
+        }
+        
+        payload = {
+            "model": MODEL_NAME,
+            "messages": messages,
+            "temperature": 0.7,
+            "max_tokens": 1024,
+            "top_p": 0.9,
+            "frequency_penalty": 0,
+            "presence_penalty": 0
+        }
+        
+        response = requests.post(API_URL, headers=headers, json=payload)
+        response.raise_for_status()  # Raise an exception for HTTP errors
+        
+        response_data = response.json()
+        return response_data["choices"][0]["message"]["content"]
+    except requests.exceptions.RequestException as e:
+        return f"Error communicating with OpenAI API: {str(e)}"
+    except (KeyError, IndexError, json.JSONDecodeError) as e:
+        return f"Error processing OpenAI response: {str(e)}"
     except Exception as e:
-        return f"Error communicating with OpenAI: {str(e)}"
+        return f"Unexpected error: {str(e)}"
